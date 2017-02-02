@@ -1,6 +1,7 @@
+import time
 from sikuli import *
 
-class Os():
+class Os(object):
     def __init__(self, screen):
         self.screen = screen
         self._start = ''
@@ -10,6 +11,9 @@ class Os():
         self._os_ready = ''
         self._build_window_ready = ''
         self._build_copied = ''
+        self._yes = ''
+        self._close = ''
+        self._cm_next = ''
 
     @property
     def start(self):
@@ -39,6 +43,18 @@ class Os():
     def build_copied(self):
         return self._build_copied
 
+    @property
+    def yes(self):
+        return self._yes
+
+    @property
+    def close(self):
+        return self._close
+
+    @property
+    def next(self):
+        return self._cm_next
+
     def after_login(self):
         pass
 
@@ -53,6 +69,9 @@ class Windows2008(Os):
         self._os_ready = '1485419533925.png'
         self._build_window_ready = '1485421165687.png'
         self._build_copied = '1485424550312.png'
+        self._yes = '1486023680669.png'
+        self._close = '1486020199747.png'
+        self._cm_next = '1486025858135.png'
 
         self._license_cancel = '1485419515911.png'
 

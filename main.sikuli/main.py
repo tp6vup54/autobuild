@@ -1,3 +1,7 @@
+import logging 
+LOG_FILENAME = 'logging_example.out'
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
+
 from operators import *
 from resources import *
 
@@ -13,6 +17,7 @@ if __name__ == '__main__':
     os = Windows2008(vm_screen)
     vm = VM_operator(vm_screen, os)
     cm = CM_operator(vm_screen, config, os)
-    vm.revert_snapshot("1485421267025.png")
-    vm.login()
-    cm.copy_build()
+    # vm.revert_snapshot("1486016777151.png")
+    # vm.login()
+    # cm.copy_build()
+    cm.install_build()
