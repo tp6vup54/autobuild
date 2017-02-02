@@ -13,7 +13,18 @@ class Os(object):
         self._build_copied = ''
         self._yes = ''
         self._close = ''
-        self._cm_next = ''
+        self._next = ''
+        self._website_combobox = ''
+        self._http_combobox = ''
+        self._db_cm_package_radio = ''
+        self._db_additional_sql = ''
+        self._db_ip_textbox = ''
+        self._db_windows_account_radio = ''
+        self._db_username = ''
+        self._db_password = ''
+        self._db_databasename = ''
+        self._delete_existing_db_radio = ''
+        self._create_root_check = ''
 
     @property
     def start(self):
@@ -53,7 +64,51 @@ class Os(object):
 
     @property
     def next(self):
-        return self._cm_next
+        return self._next
+
+    @property
+    def website_combobox(self):
+        return self._website_combobox
+
+    @property
+    def http_combobox(self):
+        return self._http_combobox
+
+    @property
+    def db_cm_package_radio(self):
+        return self._db_cm_package_radio
+
+    @property
+    def db_additional_sql(self):
+        return self._db_additional_sql
+
+    @property
+    def db_ip_textbox(self):
+        return self._db_ip_textbox
+
+    @property
+    def db_windows_account_radio(self):
+        return self._db_windows_account_radio
+
+    @property
+    def db_username(self):
+        return self._db_username
+
+    @property
+    def db_password(self):
+        return self._db_password
+
+    @property
+    def db_databasename(self):
+        return self._db_databasename
+
+    @property
+    def delete_existing_db_radio(self):
+        return self._delete_existing_db_radio
+
+    @property
+    def create_root_check(self):
+        return self._create_root_check
 
     def after_login(self):
         pass
@@ -71,7 +126,18 @@ class Windows2008(Os):
         self._build_copied = '1485424550312.png'
         self._yes = '1486023680669.png'
         self._close = '1486020199747.png'
-        self._cm_next = '1486025858135.png'
+        self._next = '1486025858135.png'
+        self._website_combobox = '1486030217924.png'
+        self._http_combobox = '1486030230900.png'
+        self._db_cm_package_radio = '1486031183013.png'
+        self._db_additional_sql = '1486033303175.png'
+        self._db_ip_textbox = '1486031219128.png'
+        self._db_windows_account_radio = '1486031244017.png'
+        self._db_username = '1486031264160.png'
+        self._db_password = '1486031275366.png'
+        self._db_databasename = '1486031286256.png'
+        self._delete_existing_db_radio = '1486035602284.png'
+        self._create_root_check = '1486037398636.png'
 
         self._license_cancel = '1485419515911.png'
 
