@@ -25,6 +25,9 @@ class Os(object):
         self._db_databasename = ''
         self._delete_existing_db_radio = ''
         self._create_root_check = ''
+        self._show_readme_checkbox = ''
+        self._start_console_checkbox = ''
+        self._finish = ''
 
     @property
     def start(self):
@@ -110,6 +113,18 @@ class Os(object):
     def create_root_check(self):
         return self._create_root_check
 
+    @property
+    def show_readme_checkbox(self):
+        return self._show_readme_checkbox
+
+    @property
+    def start_console_checkbox(self):
+        return self._start_console_checkbox
+
+    @property
+    def finish(self):
+        return self._finish
+
     def after_login(self):
         pass
 
@@ -138,6 +153,9 @@ class Windows2008(Os):
         self._db_databasename = '1486031286256.png'
         self._delete_existing_db_radio = '1486035602284.png'
         self._create_root_check = '1486037398636.png'
+        self._show_readme_checkbox = '1486090986166.png'
+        self._start_console_checkbox = '1486090995255.png'
+        self._finish = '1486091003463.png'
 
         self._license_cancel = '1485419515911.png'
 

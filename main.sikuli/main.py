@@ -5,7 +5,7 @@ from operators import *
 from resources import *
 
 def set_logger():
-    logging.config.fileConfig('logging.conf')
+    logging.config.fileConfig(r'C:\Users\sean_c_chen\git\autobuild\logging.conf')
     root = logging.getLogger()
     level = logging.DEBUG
     if os.getenv("DEBUG") == '1':
@@ -37,7 +37,13 @@ if __name__ == '__main__':
     os = Windows2008(vm_screen)
     vm = VM_operator(vm_screen, os)
     cm = CM_operator(vm_screen, config, os)
-    # vm.revert_snapshot("1486016777151.png")
-    # vm.login()
-    # cm.copy_build()
-    cm.install_build()
+    try:
+        vm.revert_snapshot('1486093318278.png')
+        vm.login()
+        cm.copy_build()
+        cm.install_build()
+        cm.get_newest_build()
+        vm.do_snapshot(config)
+    except Exception as e:
+        logging.error(e)
+        exit()

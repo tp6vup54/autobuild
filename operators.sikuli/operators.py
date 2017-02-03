@@ -7,6 +7,10 @@ class VM_operator(object):
         self.power_dict = {'start': 'b', 'shutdown': 'e', 'restart': 'r'}
         self.screen = screen
         self.current_os = os
+        self._ctrl_alt_delete = '1485418324766.png'
+        self._snapshot_manager = '1485419294466.png'
+        self._take_snapshot = '1486092101031.png'
+        self._yes = '1485419325367.png'
 
     def jump_out(self):
         logging.debug('>> jump_out')
@@ -17,7 +21,7 @@ class VM_operator(object):
     def click_ctrl_alt_delete(self):
         logging.debug('>> click_ctrl_alt_delete')
         self.jump_out()
-        self.screen.doubleClick("1485418324766.png")
+        self.screen.doubleClick(self._ctrl_alt_delete)
         logging.debug('<< click_ctrl_alt_delete')
 
     def power_switch(self, status):
@@ -31,13 +35,29 @@ class VM_operator(object):
     def revert_snapshot(self, image):
         logging.debug('>> revert_snapshot, image = %s' % image)
         self.jump_out()
-        self.screen.click("1485419294466.png")
+        self.screen.click(self._snapshot_manager)
         self.screen.doubleClick(image)
-        self.screen.click("1485419325367.png")
+        self.screen.click(self._yes)
         time.sleep(2)
         self.power_switch('start')
         time.sleep(10)
         logging.debug('<< revert_snapshot')
+
+    def do_snapshot(self, config, build_id=None):
+        logging.debug('>> do_snapshot')
+        self.jump_out()
+        self.screen.click(self._take_snapshot)
+        time.sleep(1)
+        if build_id != None:
+            logging.debug('Going to type build id: %s' % build_id)
+            type(str(build_id))
+        else:
+            logging.debug('Going to paste build id.')
+            type('v', KEY_CTRL)
+        type(Key.TAB)
+        type(str(config) + Key.TAB + Key.ENTER)
+        logging.debug('Snapshot done.')
+        logging.debug('<< do_snapshot')
 
     def login(self):
         logging.debug('>> login')
@@ -66,17 +86,14 @@ class CM_operator(object):
             logging.debug('id = None, going to get newest build.')            
             self.get_newest_build()
         self.open_run()
-        type('cmd' + Key.ENTER)
-        type(r'mkdir C:\Users\Administrator\Desktop\release' + Key.ENTER)
-        type('exit' + Key.ENTER)
-        
-        self.open_run()
         type('xcopy \\\\10.201.16.7\\build\\TMCM\\7.0\\win32\\en\\Rel\\')
         if id == None:
             type('v', KEY_CTRL)
         else:
             type(id)
         type(r'\release\output\image\standard_CD\win32\release C:\Users\Administrator\Desktop\release /s/e' + Key.ENTER)
+        time.sleep(1)
+        type('D')
         time.sleep(1)
         self.screen.waitVanish(self.current_os.build_copied, 90)
         logging.debug('<< copy_build')
@@ -248,8 +265,9 @@ class CM_operator(object):
         root = self.config.get('root')
         logging.debug('>> _create_root_account, root = ')
         logging.debug(root)
-        logging.debug('waiting for creating root account...')
-        self.screen.wait(self.current_os.create_root_check, 120)
+        logging.debug('Waiting for creating root account...')
+        self.screen.wait(self.current_os.create_root_check, 300)
+        logging.debug('Going to create root account.')
         type(root.get('id'))
         type(Key.TAB + Key.TAB)
         type(root.get('password'))
@@ -257,6 +275,17 @@ class CM_operator(object):
         type(root.get('password'))
         self.screen.click(self.current_os.next)
         logging.debug('<< _create_root_account')
+
+    def _finish(self):
+        logging.debug('>> _finish')
+        logging.debug('Waiting for finish...')
+        time.sleep(300)
+        self.screen.wait(self.current_os.finish, 600)
+        logging.debug('CM installation finished.')
+        self.screen.click(self.current_os.show_readme_checkbox)
+        self.screen.click(self.current_os.start_console_checkbox)
+        self.screen.click(self.current_os.finish)
+        logging.debug('<< _finish')
 
     def install_cm(self):
         logging.debug('>> install_cm')
@@ -267,13 +296,14 @@ class CM_operator(object):
         self._after_web_server()
         self._setup_DB()
         self._create_root_account()
+        self._finish()
         logging.debug('<< install_cm')
 
     def install_build(self):
         logging.debug('>> install_build')
-        # self.run_setup()
-        # self.screen.wait(self.current_os.yes, 10)
-        # self.install_requirements()
+        self.run_setup()
+        self.screen.wait(self.current_os.yes, 10)
+        self.install_requirements()
         self.install_cm()
         logging.debug('<< install_build')
 
