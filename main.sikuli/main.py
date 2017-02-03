@@ -30,6 +30,10 @@ if __name__ == '__main__':
             'id': 'root',
             'password': '111111'
         },
+        'p4': {
+            'username': '',
+            'password': 'P@ssw0rd'
+        },
         'website': 'virtual',
         'license': 'std',
         'http': 'http+s'
@@ -37,11 +41,13 @@ if __name__ == '__main__':
     os = Windows2008(vm_screen)
     vm = VM_operator(vm_screen, os)
     cm = CM_operator(vm_screen, config, os)
+    p4 = P4_operator(vm_screen, os)
     try:
         vm.revert_snapshot('1486093318278.png')
         vm.login()
         cm.copy_build()
         cm.install_build()
+        p4.force_sync_latest(config.get('p4').get('password'))
         cm.get_newest_build()
         vm.do_snapshot(config)
     except Exception as e:

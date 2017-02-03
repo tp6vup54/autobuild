@@ -2,11 +2,16 @@ import logging
 import time
 from sikuli import *
 
-class VM_operator(object):
+class Operator(object):
     def __init__(self, screen, os):
-        self.power_dict = {'start': 'b', 'shutdown': 'e', 'restart': 'r'}
         self.screen = screen
         self.current_os = os
+
+
+class VM_operator(Operator):
+    def __init__(self, screen, os):
+        super(VM_operator, self).__init__(screen, os)
+        self.power_dict = {'start': 'b', 'shutdown': 'e', 'restart': 'r'}
         self._ctrl_alt_delete = '1485418324766.png'
         self._snapshot_manager = '1485419294466.png'
         self._take_snapshot = '1486092101031.png'
@@ -69,11 +74,48 @@ class VM_operator(object):
         logging.debug('<< login')
 
 
-class CM_operator(object):
+class P4_operator(Operator):
+    def __init__(self, screen, os):
+        super(P4_operator, self).__init__(screen, os)
+        self._p4v_check = '1486105691903.png'
+        self._p4v_workspace_loaded = '1486106198699.png'
+        self._staf_root = '1486106394863.png'
+        self._sync_finish_check = '1486106607452.png'
+
+    def force_sync_latest(self, password):
+        logging.debug('>> force_sync_latest, password = %s' % password)
+        self.current_os.open_run()
+        logging.debug('Start p4v')
+        type('p4v' + Key.ENTER)
+        time.sleep(2)
+        type(Key.ENTER)
+        time.sleep(1)
+        type(password + Key.ENTER)
+        self.screen.wait(self._p4v_check, 60)
+        logging.debug('Switch workspace.')
+        type('c', KEY_ALT)
+        type('k')
+        self.screen.wait(self._p4v_workspace_loaded, 10)
+        type(Key.END + Key.ENTER)
+        time.sleep(1)
+        self.screen.click(self._staf_root)
+        logging.debug('Force get latest rivision.')
+        type('a', KEY_ALT)
+        type('n')
+        time.sleep(1)
+        type('f', KEY_ALT)
+        time.sleep(1)
+        type(Key.ENTER)
+        self.screen.wait(self._sync_finish_check, 10)
+        self.screen.waitVanish(self._sync_finish_check, 120)
+        logging.debug('Sync finished.')
+        logging.debug('<< force_sync_latest')
+
+
+class CM_operator(Operator):
     def __init__(self, screen, config, os):
-        self.screen = screen
+        super(CM_operator, self).__init__(screen, os)
         self.config = config
-        self.current_os = os
         self.activation = {
             'std': 'TM-72JG-LSBBS-4RMHY-NKKTD-WHJVB-MPS4N',
             'adv': 'TM-22DX-VXZK8-AMMZ5-7GU2N-W7QS5-PJMLE'
@@ -85,7 +127,7 @@ class CM_operator(object):
         if id == None:
             logging.debug('id = None, going to get newest build.')            
             self.get_newest_build()
-        self.open_run()
+        self.current_os.open_run()
         type('xcopy \\\\10.201.16.7\\build\\TMCM\\7.0\\win32\\en\\Rel\\')
         if id == None:
             type('v', KEY_CTRL)
@@ -98,16 +140,9 @@ class CM_operator(object):
         self.screen.waitVanish(self.current_os.build_copied, 90)
         logging.debug('<< copy_build')
 
-    def open_run(self):
-        logging.debug('>> open_run')
-        self.screen.click(self.current_os.start)
-        self.screen.click(self.current_os.run)
-        time.sleep(1)
-        logging.debug('<< open_run')
-
     def get_newest_build(self):
         logging.debug('>> get_newest_build')
-        self.open_run()
+        self.current_os.open_run()
         type(r'\\10.201.16.7\build\TMCM\7.0\win32\en\Rel' + Key.ENTER)
         self.screen.wait(self.current_os.build_window_ready, 5)
         type(Key.END + Key.UP + Key.F2)
@@ -117,7 +152,7 @@ class CM_operator(object):
 
     def run_setup(self):
         logging.debug('>> run_setup')
-        self.open_run()
+        self.current_os.open_run()
         time.sleep(1)
         type(r'C:\Users\Administrator\Desktop\release\setup.exe' + Key.ENTER)
         logging.debug('<< run_setup')

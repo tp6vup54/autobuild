@@ -1,4 +1,6 @@
 import time
+import logging
+
 from sikuli import *
 
 class Os(object):
@@ -127,6 +129,13 @@ class Os(object):
 
     def after_login(self):
         pass
+
+    def open_run(self):
+        logging.debug('>> open_run')
+        self.screen.click(self.start)
+        self.screen.click(self.run)
+        time.sleep(1)
+        logging.debug('<< open_run')
 
 
 class Windows2008(Os):
