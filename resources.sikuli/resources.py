@@ -6,6 +6,29 @@ from sikuli import *
 class Os(object):
     def __init__(self, screen):
         self.screen = screen
+        self._staf_default = {
+            'ui_py': {
+                'location': r'C:\STAF\lib\python\sCloud\util\GlobalVariable\Module\UI.py',
+                'ip': {
+                    'content': r'`"%s`"',
+                    'default': '127.0.0.1'
+                }
+            }, 'scdb_py': {
+                'location': r'C:\STAF\lib\python\sCloud\util\GlobalVariable\Module\SCDB.py',
+                'ip': {
+                    'content': r'`"%s`"',
+                    'default': '127.0.0.1'
+                },
+                'username': {
+                    'content': r'`"%s`"',
+                    'default': 'sa'
+                },
+                'password': {
+                    'content': r'`"%s`"',
+                    'default': 'P@ssw0rd'
+                }
+            }
+        }
         self._start = ''
         self._run = ''
         self._login_ready = ''
@@ -137,6 +160,55 @@ class Os(object):
         time.sleep(1)
         logging.debug('<< open_run')
 
+    def get_newest_build(self):
+        logging.debug('>> get_newest_build')
+        self.open_run()
+        type(r'\\10.201.16.7\build\TMCM\7.0\win32\en\Rel' + Key.ENTER)
+        self.screen.wait(self.build_window_ready, 5)
+        type(Key.END + Key.UP + Key.F2)
+        type('c', KEY_CTRL)
+        type(Key.F4, KEY_ALT)
+        logging.debug('<< get_newest_build')
+
+    def open_powershell(self):
+        logging.debug('>> open_powershell')
+        self.open_run()
+        type('powershell' + Key.ENTER)
+        time.sleep(1)
+        logging.debug('<< open_powershell')
+
+    def _get_file_changing_command(self, data_root, data_domain, new_content):
+        return r'(Get-Content %s) | ForEach-Object { $_ -replace "%s", "%s" } | Set-Content %s' %\
+        (
+            self._staf_default[data_root]['location'],
+            self._staf_default[data_root][data_domain]['content'] % self._staf_default[data_root][data_domain]['default'], 
+            self._staf_default[data_root][data_domain]['content'] % new_content,
+            self._staf_default[data_root]['location']
+            # r'C:\Users\Administrator\Desktop\aaa.txt'
+        )
+
+        # config = {
+        #       'cm': {'ip': XXX},
+        #       'db': {'ip': XXX, 'username': XXX, 'password': XXX},
+        #       'ad': {'ip': XXX, 'username': XXX, 'password': XXX}
+        # }
+    def update_cm_config_in_staf(self, config):
+        logging.debug('>> update_cm_config_in_staf, config: ')
+        logging.debug(str(config))
+        config_template = {
+            'cm': ('ip'),
+            'db': ('ip'),
+            'ad': ('ip', 'username', 'password')
+        }
+        target_file = {'cm': 'ui_py', 'db': 'scdb_py', 'ad': 'ui_py'}
+        if config:
+            self.open_powershell()
+        for k, v in config_template.iteritems():
+            if k in config:
+                for _ in v:
+                    if _ in config[k]:
+                        type(self._get_file_changing_command(target_file[k], _, config[k][_]) + Key.ENTER)
+        logging.debug('<< update_cm_config_in_staf')
 
 class Windows2008(Os):
     def __init__(self, screen):

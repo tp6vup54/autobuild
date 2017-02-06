@@ -48,7 +48,7 @@ if __name__ == '__main__':
         cm.copy_build()
         cm.install_build()
         p4.force_sync_latest(config.get('p4').get('password'))
-        cm.get_newest_build()
+        os.update_cm_config_in_staf(config)
         vm.do_snapshot(config)
     except Exception as e:
         logging.error(e)

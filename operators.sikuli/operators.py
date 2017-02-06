@@ -50,6 +50,9 @@ class VM_operator(Operator):
 
     def do_snapshot(self, config, build_id=None):
         logging.debug('>> do_snapshot')
+        if build_id == None:
+            logging.debug('Get newest build id.')
+            self.current_os.get_newest_build()
         self.jump_out()
         self.screen.click(self._take_snapshot)
         time.sleep(1)
@@ -57,7 +60,7 @@ class VM_operator(Operator):
             logging.debug('Going to type build id: %s' % build_id)
             type(str(build_id))
         else:
-            logging.debug('Going to paste build id.')
+            logging.debug('Going to paste build id')
             type('v', KEY_CTRL)
         type(Key.TAB)
         type(str(config) + Key.TAB + Key.ENTER)
@@ -126,7 +129,7 @@ class CM_operator(Operator):
         logging.debug('>> copy_build')
         if id == None:
             logging.debug('id = None, going to get newest build.')            
-            self.get_newest_build()
+            self.current_os.get_newest_build()
         self.current_os.open_run()
         type('xcopy \\\\10.201.16.7\\build\\TMCM\\7.0\\win32\\en\\Rel\\')
         if id == None:
@@ -139,16 +142,6 @@ class CM_operator(Operator):
         time.sleep(1)
         self.screen.waitVanish(self.current_os.build_copied, 90)
         logging.debug('<< copy_build')
-
-    def get_newest_build(self):
-        logging.debug('>> get_newest_build')
-        self.current_os.open_run()
-        type(r'\\10.201.16.7\build\TMCM\7.0\win32\en\Rel' + Key.ENTER)
-        self.screen.wait(self.current_os.build_window_ready, 5)
-        type(Key.END + Key.UP + Key.F2)
-        type('c', KEY_CTRL)
-        type(Key.F4, KEY_ALT)
-        logging.debug('<< get_newest_build')
 
     def run_setup(self):
         logging.debug('>> run_setup')
