@@ -37,14 +37,23 @@ class VM_operator(Operator):
             type(k, KEY_CTRL)
         logging.debug('<< click_ctrl_alt_delete')
 
-    def revert_snapshot(self, image):
+    def switch_tab(self, tab_id):
+        logging.debug('>> switch_tab, tab id = %d' % tab_id)
+        self.jump_out()
+        type('t', KEY_ALT)
+        type(tab_id)
+        time.sleep(1)
+        logging.debug('<< switch_tab')
+
+    def revert_snapshot(self, image, start=False):
         logging.debug('>> revert_snapshot, image = %s' % image)
         self.jump_out()
         self.screen.click(self._snapshot_manager)
         self.screen.doubleClick(image)
         self.screen.click(self._yes)
-        time.sleep(2)
-        self.power_switch('start')
+        if start:
+            time.sleep(2)
+            self.power_switch('start')
         time.sleep(10)
         logging.debug('<< revert_snapshot')
 

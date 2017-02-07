@@ -43,7 +43,10 @@ if __name__ == '__main__':
     cm = CM_operator(vm_screen, config, os)
     p4 = P4_operator(vm_screen, os)
     try:
-        vm.revert_snapshot('1486093318278.png')
+        vm.switch_tab(3)
+        vm.revert_snapshot('1486441003439.png')
+        vm.switch_tab(1)
+        vm.revert_snapshot('1486093318278.png', start=True)
         vm.login()
         cm.copy_build()
         cm.install_build()

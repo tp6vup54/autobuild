@@ -207,6 +207,7 @@ class Os(object):
             if k in config:
                 for _ in v:
                     if _ in config[k]:
+                        logging.debug('Key in: ' + self._get_file_changing_command(target_file[k], _, config[k][_]))
                         type(self._get_file_changing_command(target_file[k], _, config[k][_]) + Key.ENTER)
         logging.debug('<< update_cm_config_in_staf')
 
