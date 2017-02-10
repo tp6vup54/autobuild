@@ -196,9 +196,9 @@ class Os(object):
         logging.debug('>> update_cm_config_in_staf, config: ')
         logging.debug(str(config))
         config_template = {
-            'cm': ('ip'),
-            'db': ('ip'),
-            'ad': ('ip', 'username', 'password')
+            'cm': ['ip'],
+            'db': ['ip'],
+            'ad': ['ip', 'username', 'password']
         }
         target_file = {'cm': 'ui_py', 'db': 'scdb_py', 'ad': 'ui_py'}
         if config:

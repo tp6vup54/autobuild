@@ -41,7 +41,7 @@ class VM_operator(Operator):
         logging.debug('>> switch_tab, tab id = %d' % tab_id)
         self.jump_out()
         type('t', KEY_ALT)
-        type(tab_id)
+        type(str(tab_id))
         time.sleep(1)
         logging.debug('<< switch_tab')
 
@@ -55,6 +55,7 @@ class VM_operator(Operator):
             time.sleep(2)
             self.power_switch('start')
         time.sleep(10)
+        self.screen.waitVanish('1486453801844.png')
         logging.debug('<< revert_snapshot')
 
     def do_snapshot(self, config, build_id=None):
@@ -99,7 +100,7 @@ class P4_operator(Operator):
         self.current_os.open_run()
         logging.debug('Start p4v')
         type('p4v' + Key.ENTER)
-        time.sleep(2)
+        self.screen.wait('1486609237112.png', 10)
         type(Key.ENTER)
         time.sleep(1)
         type(password + Key.ENTER)
@@ -224,6 +225,7 @@ class CM_operator(Operator):
 
     def _after_web_server(self):
         logging.debug('>> _after_web_server')
+        time.sleep(1)
         type(Key.ENTER)
         self.screen.click(self.current_os.next)
         logging.debug('<< _after_web_server')
@@ -261,7 +263,10 @@ class CM_operator(Operator):
     def _setup_DB_with_additional_DB(self, db_setting):
         logging.debug('>> _setup_DB_with_additional_DB')
         self.screen.click(self.current_os.db_additional_sql)
-        self._input_db_ip(db_setting.get('ip'))
+        if db_setting.get('db') == 'local':
+            self._input_db_ip('(local)')
+        else:
+            self._input_db_ip(db_setting.get('ip'))
         logging.debug('<< _setup_DB_with_additional_DB')
 
     def _handle_duplicate_db(self, action):
@@ -339,7 +344,7 @@ class CM_operator(Operator):
     def install_build(self):
         logging.debug('>> install_build')
         self.run_setup()
-        self.screen.wait(self.current_os.yes, 10)
+        self.screen.wait(self.current_os.yes, 20)
         self.install_requirements()
         self.install_cm()
         logging.debug('<< install_build')
