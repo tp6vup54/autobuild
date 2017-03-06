@@ -135,11 +135,11 @@ class CM_operator(Operator):
         }
         self.http_combo_order = {'https only': 2, 'http only': 1, 'http+s': 0}
 
-    def copy_build(self, id=None):
+    def copy_build(self, ftp_config, id=None):
         logging.debug('>> copy_build')
         if id == None:
             logging.debug('id = None, going to get newest build.')            
-            self.current_os.get_newest_build()
+            self.current_os.get_newest_build(ftp_config)
         self.current_os.open_run()
         type('xcopy \\\\10.201.16.7\\build\\TMCM\\7.0\\win32\\en\\Rel\\')
         if id == None:
@@ -187,6 +187,10 @@ class CM_operator(Operator):
         self.screen.click(self.current_os.yes)
         self.screen.wait(self.current_os.next, 10)
         self.screen.click(self.current_os.next)
+        logging.debug('Try to find SQL alert.')
+        if self.screen.exists(self.current_os.ok):
+            logging.debug('Find SQL alert.')
+            self.screen.click(self.current_os.ok)
         self.screen.click(self.current_os.next)
         logging.debug('<< _run_preprocess')
 

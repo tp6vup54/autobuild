@@ -16,6 +16,9 @@ if __name__ == '__main__':
     set_logger()
     vm_screen = Screen(1)
     config = {
+        'ftp': {
+            'password': 'P@ssw0rdP'
+        },
         'db': {
             'from': 'additional',           # 'cm package' or 'additional'
             'db': 'local',                 # 'local' or 'remote', if 'local', 'ip' won't be used in db setting.
@@ -34,6 +37,14 @@ if __name__ == '__main__':
             'username': '',
             'password': 'P@ssw0rd'
         },
+        'smtp': {
+            'ip': '10.1.173.218'
+        },
+        'ad': {
+            'ip': '10.1.173.218',
+            'username': 'Administrator',
+            'password': 'P@ssw0rdP'
+        },
         'website': 'virtual',               # 'virtual' or 'default'.
         'license': 'adv',                   # 'std' or 'adv'.
         'http': 'http+s'                    # 'https only', 'http only' or 'http+s'.
@@ -46,9 +57,9 @@ if __name__ == '__main__':
         # vm.switch_tab(3)
         # vm.revert_snapshot('1486441003439.png')
         # vm.switch_tab(1)
-        vm.revert_snapshot('1486093318278.png', start=True)
-        vm.login()
-        cm.copy_build()
+        # vm.revert_snapshot('1487588603702.png', start=True)
+        # vm.login()
+        # cm.copy_build(config['ftp'])
         cm.install_build()
         p4.force_sync_latest(config.get('p4').get('password'))
         os.update_cm_config_in_staf(config)
