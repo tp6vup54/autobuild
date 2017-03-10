@@ -1,8 +1,8 @@
 import logging
 import logging.config
 
-from operators import *
 from resources import *
+from procedures import *
 
 def set_logger():
     logging.config.fileConfig('logging.conf')
@@ -12,19 +12,21 @@ def set_logger():
         level = logging.DEBUG
     root.setLevel(level)
 
+
 if __name__ == '__main__':
     set_logger()
     vm_screen = Screen(1)
+    os = Windows2008(vm_screen)
     config = {
         'ftp': {
             'password': 'P@ssw0rdP'
         },
         'db': {
             'from': 'additional',           # 'cm package' or 'additional'
-            'db': 'local',                 # 'local' or 'remote', if 'local', 'ip' won't be used in db setting.
-            'ip': '127.0.0.1',            # empty means don't change.
-            'auth': 'sa',                  # 'win' or 'sa'
-            'username': 'sa',
+            'db': 'remote',                 # 'local' or 'remote', if 'local', 'ip' won't be used in db setting.
+            'ip': '10.1.172.12',            # empty means don't change.
+            'auth': 'win',                  # 'win' or 'sa'
+            'username': 'administrator',
             'password': 'P@ssw0rd',
             'database_name': '',            # empty means don't change.
             'db_duplicated': 'delete'       # 'append', 'delete' or 'create'
@@ -35,7 +37,7 @@ if __name__ == '__main__':
         },
         'p4': {
             'username': '',
-            'password': 'P@ssw0rd'
+            'password': 'P@ssw0rdP'
         },
         'smtp': {
             'ip': '10.1.173.218'
@@ -49,21 +51,11 @@ if __name__ == '__main__':
         'license': 'adv',                   # 'std' or 'adv'.
         'http': 'http+s'                    # 'https only', 'http only' or 'http+s'.
     }
-    os = Windows2008(vm_screen)
-    vm = VM_operator(vm_screen, os)
-    cm = CM_operator(vm_screen, config, os)
-    p4 = P4_operator(vm_screen, os)
+    fresh_install = FreshInstall(vm_screen, os, config, {1: '1487588603702.png'})
+    migration = Migration(vm_screen, os, config, {1: '1489142293061.png', 3: '1489142293061'})
     try:
-        # vm.switch_tab(3)
-        # vm.revert_snapshot('1486441003439.png')
-        # vm.switch_tab(1)
-        # vm.revert_snapshot('1487588603702.png', start=True)
-        # vm.login()
-        # cm.copy_build(config['ftp'])
-        cm.install_build()
-        p4.force_sync_latest(config.get('p4').get('password'))
-        os.update_cm_config_in_staf(config)
-        vm.do_snapshot(config)
+        # fresh_install.run()
+        migration.run()
     except Exception as e:
         logging.error(e)
         exit()

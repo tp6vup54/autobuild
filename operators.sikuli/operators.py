@@ -23,6 +23,11 @@ class VM_operator(Operator):
         keyUp(Key.CTRL + Key.ALT)
         logging.debug('<< jump_out')
 
+    def into_vm(self):
+        logging.debug('>> into_vm')
+        type('g', KEY_CTRL)
+        logging.debug('<< into_vm')
+
     def click_ctrl_alt_delete(self):
         logging.debug('>> click_ctrl_alt_delete')
         self.jump_out()
@@ -62,7 +67,7 @@ class VM_operator(Operator):
         logging.debug('>> do_snapshot')
         if build_id == None:
             logging.debug('Get newest build id.')
-            self.current_os.get_newest_build()
+            self.current_os.get_newest_build(config['ftp'])
         self.jump_out()
         self.screen.click(self._take_snapshot)
         time.sleep(1)
@@ -138,7 +143,7 @@ class CM_operator(Operator):
     def copy_build(self, ftp_config, id=None):
         logging.debug('>> copy_build')
         if id == None:
-            logging.debug('id = None, going to get newest build.')            
+            logging.debug('id = None, going to get newest build.')
             self.current_os.get_newest_build(ftp_config)
         self.current_os.open_run()
         type('xcopy \\\\10.201.16.7\\build\\TMCM\\7.0\\win32\\en\\Rel\\')
@@ -345,6 +350,17 @@ class CM_operator(Operator):
         self._finish()
         logging.debug('<< install_cm')
 
+    def migrate_cm(self):
+        logging.debug('>> migrate_cm')
+        self.screen.click(self.current_os.next)
+        self.screen.click(self.current_os.yes)
+        self.screen.click(self.current_os.next)
+        logging.debug('waiting for database re-index alert...')
+        self.screen.wait(self.current_os.ok, 300)
+        self.screen.click(self.current_os.ok)
+        self._finish()
+        logging.debug('<< migrate_cm')
+
     def install_build(self):
         logging.debug('>> install_build')
         self.run_setup()
@@ -352,6 +368,14 @@ class CM_operator(Operator):
         self.install_requirements()
         self.install_cm()
         logging.debug('<< install_build')
+
+    def migrate(self):
+        logging.debug('>> migrate')
+        self.run_setup()
+        self.screen.wait(self.current_os.yes, 20)
+        self.install_requirements()
+        self.migrate_cm()
+        logging.debug('<< migrate')
 
 
 class CMException(Exception):
