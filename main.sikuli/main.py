@@ -37,7 +37,7 @@ if __name__ == '__main__':
     config_source.read('autobuild.conf')
     vm_screen = create_screen(config_source)
     os = create_os(config_source, vm_screen)
-    procedure = config.get('init', 'procedure')
+    procedure = config_source.get('init', 'procedure')
     config = eval(config_source.get('config', 'config'))
     fresh_install = FreshInstall(vm_screen, os, config, {'cm': '1487588603702.png'})
     migration = Migration(vm_screen, os, config, config.get('init_snapshot'))
