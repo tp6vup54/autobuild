@@ -20,9 +20,9 @@ class FreshInstall(InstallProcedure):
     def run(self):
         if self.config['db']['db'] == 'remote':
             self.vm.switch_tab(3)
-            self.vm.revert_snapshot(self.init_snapshot[3])
+            self.vm.revert_snapshot(self.init_snapshot['db'])
             self.vm.switch_tab(1)
-        self.vm.revert_snapshot(self.init_snapshot[1], start=True)
+        self.vm.revert_snapshot(self.init_snapshot['cm'], start=True)
         self.vm.login()
         self.cm.copy_build(self.config['ftp'])
         self.cm.install_build()
