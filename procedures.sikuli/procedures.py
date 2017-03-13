@@ -37,9 +37,9 @@ class Migration(InstallProcedure):
 
     def run(self):
         if self.config['db']['db'] == 'remote':
-            self.vm.switch_tab(3)
+            self.vm.switch_tab(str(self.config['vm_tab']['db']))
             self.vm.revert_snapshot(self.init_snapshot[3])
-            self.vm.switch_tab(1)
+            self.vm.switch_tab(str(self.config['vm_tab']['cm']))
         self.vm.revert_snapshot(self.init_snapshot[1])
         self.vm.into_vm()
         self.cm.copy_build(self.config['ftp'])
