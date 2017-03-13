@@ -19,10 +19,10 @@ class FreshInstall(InstallProcedure):
 
     def run(self):
         if self.config['db']['db'] == 'remote':
-            self.vm.switch_tab(3)
-            self.vm.revert_snapshot(self.init_snapshot['db'])
-            self.vm.switch_tab(1)
-        self.vm.revert_snapshot(self.init_snapshot['cm'], start=True)
+            self.vm.switch_tab(str(self.config['vm_tab']['db']))
+            self.vm.revert_snapshot(self.init_snapshot['db']['name'], self.init_snapshot['db']['start'])
+            self.vm.switch_tab(str(self.config['vm_tab']['cm']))
+        self.vm.revert_snapshot(self.init_snapshot['cm']['name'], self.init_snapshot['cm']['start'])
         self.vm.login()
         self.cm.copy_build(self.config['ftp'])
         self.cm.install_build()
@@ -38,9 +38,9 @@ class Migration(InstallProcedure):
     def run(self):
         if self.config['db']['db'] == 'remote':
             self.vm.switch_tab(str(self.config['vm_tab']['db']))
-            self.vm.revert_snapshot(self.init_snapshot[3])
+            self.vm.revert_snapshot(self.init_snapshot['db']['name'], self.init_snapshot['db']['start'])
             self.vm.switch_tab(str(self.config['vm_tab']['cm']))
-        self.vm.revert_snapshot(self.init_snapshot[1])
+        self.vm.revert_snapshot(self.init_snapshot['cm']['name'], self.init_snapshot['cm']['start'])
         self.vm.into_vm()
         self.cm.copy_build(self.config['ftp'])
         self.cm.migrate()

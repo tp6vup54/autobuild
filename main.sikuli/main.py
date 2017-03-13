@@ -40,7 +40,7 @@ if __name__ == '__main__':
     procedure = config.get('init', 'procedure')
     config = eval(config_source.get('config', 'config'))
     fresh_install = FreshInstall(vm_screen, os, config, {'cm': '1487588603702.png'})
-    migration = Migration(vm_screen, os, config, {'cm': '1489142293061.png', 'db': '1489142293061.png'})
+    migration = Migration(vm_screen, os, config, config.get('init_snapshot'))
     try:
         App.focus('VMware Workstation')
         if procedure == 'fresh_install':
