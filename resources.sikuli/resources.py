@@ -4,9 +4,58 @@ import logging
 
 from sikuli import *
 
+class IISCryptoResource(object):
+    def __init__(self):
+        self.run = '1489404478155.png'
+        self.accept = '1489404875931.png'
+        self.apply = '1489404922811.png'
+
+
+class RegeditUtil(object):
+    def __init__(self):
+        self.current_panel = 'left'
+
+    def reset(self):
+        for i in range(10):
+            type(Key.LEFT)
+        type(Key.HOME + Key.RIGHT)
+
+    def switch_panel(self):
+        if self.current_panel == 'left':
+            type(Key.TAB)
+            self.current_panel = 'right'
+        elif self.current_panel == 'right':
+            type(Key.TAB, KEY_SHIFT)
+            self.current_panel = 'left'
+
+    def navigate_to_target(self, target):
+        l = target.split('\\')
+        self.reset()
+        for k in l:
+            type(k + Key.RIGHT)
+
+    def copy_key(self, key):
+        if self.current_panel == 'left':
+            self.switch_panel()
+        type(key + Key.ENTER)
+        type('c', KEY_CTRL)
+        type(Key.ESC)
+        self.switch_panel()
+
+    def paste_key(self, key):
+        if self.current_panel == 'left':
+            self.switch_panel()
+        type(key + Key.ENTER)
+        type('v', KEY_CTRL)
+        type(Key.ENTER)
+        self.switch_panel()
+
+
 class Os(object):
     def __init__(self, screen):
         self.screen = screen
+        self.reg = RegeditUtil()
+        self.iiscrypto = IISCryptoResource()
         self._staf_default = {
             'server': {
                 'location': r'C:\STAF\lib\python\sCloud\util\GlobalVariable\Module\UI.py',
@@ -88,6 +137,8 @@ class Os(object):
         self._waiting_ftp_password = ''
         self._ftp_password_blank = ''
         self._ok = ''
+        self._user_selection = ''
+        self._build_window = ''
 
     @property
     def start(self):
@@ -197,6 +248,14 @@ class Os(object):
     def ftp_password_blank(self):
         return self._ftp_password_blank
 
+    @property
+    def user_selection(self):
+        return self._user_selection
+
+    @property
+    def build_window(self):
+        return self._build_window
+
     def after_login(self):
         pass
 
@@ -222,10 +281,19 @@ class Os(object):
         type(r'\\10.201.16.7\build\TMCM\7.0\win32\en\Rel' + Key.ENTER)
         self.check_enter_ftp_password(ftp_config)
         self.screen.wait(self.build_window_ready, 5)
+        self.screen.click(self.build_window)
+        self.turn_off_numlock()
         type(Key.END + Key.UP + Key.F2)
         type('c', KEY_CTRL)
         type(Key.F4, KEY_ALT)
         logging.debug('<< get_newest_build')
+
+    def turn_off_numlock(self):
+        val = Env.isLockOn(Key.NUM_LOCK)
+        if val:
+            logging.debug('switching off numlock...')
+            type(Key.NUM_LOCK)
+        logging.debug('Numlock turned off.')
 
     def open_powershell(self):
         logging.debug('>> open_powershell')
@@ -260,6 +328,43 @@ class Os(object):
                         type(self._get_file_changing_command(self._staf_default[k1], k2, v2) + Key.ENTER)
         logging.debug('<< update_cm_config_in_staf')
 
+    def update_tls12_ODBC_register(self):
+        logging.debug('>> update_tls12_ODBC_register')
+        pathes = [
+            {
+                'source': r'HKEY_LOCAL_MACHINE\SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers',
+                'target': r'HKEY_LOCAL_MACHINE\SOFTWARE\ODBC\ODBC.INI\ControlManager_DataBase'
+            },
+            {
+                'source': r'HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\ODBC\ODBCINST.INI\ODBC Drivers',
+                'target': r'HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\ODBC\ODBC.INI\ControlManager_DataBase'
+            }
+        ]
+        self.open_run()
+        type('regedit' + Key.ENTER)
+        time.sleep(1)
+        for p in pathes:
+            logging.debug('Current operated: %s' % str(p))
+            self.reg.navigate_to_target(p['source'])
+            type(Key.UP)
+            self.reg.copy_key('Driver')
+            self.reg.navigate_to_target(p['target'])
+            self.reg.paste_key('Driver')
+        type(Key.F4, KEY_ALT)
+        logging.debug('<< update_tls12_ODBC_register')
+
+    def update_IIS_tls12(self):
+        self.open_run()
+        type(r'C:\Users\Administrator\Desktop\IISCrypto')
+        self.screen.wait(self.iiscrypto.run, 60)
+        self.screen.click(self.iiscrypto.run)
+        self.screen.wait(self.iiscrypto.accept, 60)
+        self.screen.click(self.iiscrypto.accept)
+        self.screen.wait(self.iiscrypto.apply, 10)
+        type('mpsstttttttt')
+        self.screen.click(self.iiscrypto.apply)
+
+
 class Windows2008(Os):
     def __init__(self, screen):
         super(Windows2008, self).__init__(screen)
@@ -291,15 +396,20 @@ class Windows2008(Os):
         self._waiting_ftp_password = '1488530087175.png'
         self._ok = '1488531174818.png'
         self._ftp_password_blank = '1488769577893.png'
+        self._user_selection = '1489397678944.png'
+        self._build_window = '1489398946375.png'
 
         self._license_cancel = '1485419515911.png'
 
         self._server_management_close = '1485419547613.png'
 
     def after_login(self):
+        logging.debug('>> after_login')
+        self.screen.wait(self._license_cancel, 60)
         self.screen.click(self._license_cancel)
-        self.screen.wait(self.os_ready, 10)
+        self.screen.wait(self.os_ready, 60)
         self.screen.click(self._server_management_close)
+        logging.debug('<< after_login')
 
 
 class Windows2012(Os):

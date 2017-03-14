@@ -1,3 +1,6 @@
+import logging
+from sikuli import *
+
 from operators import *
 
 class InstallProcedure(object):
@@ -23,7 +26,11 @@ class FreshInstall(InstallProcedure):
             self.vm.revert_snapshot(self.init_snapshot['db']['name'], self.init_snapshot['db']['start'])
             self.vm.switch_tab(int(self.config['vm_tab']['cm']))
         self.vm.revert_snapshot(self.init_snapshot['cm']['name'], self.init_snapshot['cm']['start'])
-        self.vm.login()
+        logging.debug('CM VM status: %s started' % ('not' if self.init_snapshot['cm']['start'] else ''))
+        if self.init_snapshot['cm']['start']:
+            self.vm.login()
+        else:
+            self.vm.into_vm()
         self.cm.copy_build(self.config['ftp'])
         self.cm.install_build()
         self.p4.force_sync_latest(self.config.get('p4').get('password'))
@@ -41,9 +48,17 @@ class Migration(InstallProcedure):
             self.vm.revert_snapshot(self.init_snapshot['db']['name'], self.init_snapshot['db']['start'])
             self.vm.switch_tab(int(self.config['vm_tab']['cm']))
         self.vm.revert_snapshot(self.init_snapshot['cm']['name'], self.init_snapshot['cm']['start'])
-        self.vm.into_vm()
+        logging.debug('CM VM status: %s started' % ('not' if self.init_snapshot['cm']['start'] else ''))
+        if self.init_snapshot['cm']['start']:
+            self.vm.login()
+        else:
+            self.vm.into_vm()
         self.cm.copy_build(self.config['ftp'])
         self.cm.migrate()
         self.p4.force_sync_latest(self.config.get('p4').get('password'))
         self.os.update_cm_config_in_staf(self.config)
+        self.os.update_tls12_ODBC_register()
+        self.os.update_IIS_tls12()
+        self.vm.power_switch('restart')
+        self.vm.login()
         self.vm.do_snapshot(self.config)

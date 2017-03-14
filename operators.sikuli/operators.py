@@ -32,6 +32,7 @@ class VM_operator(Operator):
         logging.debug('>> click_ctrl_alt_delete')
         self.jump_out()
         self.screen.doubleClick(self._ctrl_alt_delete)
+        self.into_vm()
         logging.debug('<< click_ctrl_alt_delete')
 
     def power_switch(self, status):
@@ -51,16 +52,19 @@ class VM_operator(Operator):
         logging.debug('<< switch_tab')
 
     def revert_snapshot(self, image, start=False):
-        logging.debug('>> revert_snapshot, image = %s' % image)
+        logging.debug('>> revert_snapshot, image = %s, start = %r' % (image, start))
         self.jump_out()
         self.screen.click(self._snapshot_manager)
         self.screen.doubleClick(image)
         self.screen.click(self._yes)
         if start:
+            logging.debug('Revert no-boot snapshot, going to boot.')
             time.sleep(2)
             self.power_switch('start')
-        time.sleep(10)
-        self.screen.waitVanish('1486453801844.png')
+        else:
+            logging.debug('Revert booted snapshot, waiting reverting done.')
+            time.sleep(10)
+            self.screen.waitVanish('1486453801844.png', 60)
         logging.debug('<< revert_snapshot')
 
     def do_snapshot(self, config, build_id=None):
@@ -86,6 +90,9 @@ class VM_operator(Operator):
         logging.debug('>> login')
         self.screen.wait(self.current_os.login_ready, 120)
         self.click_ctrl_alt_delete()
+        if self.screen.exists(self.current_os.user_selection):
+            self.screen.click(self.current_os.user_selection)
+            time.sleep(1)
         self.screen.click(self.current_os.username_textbox)
         type('P@ssw0rd' + Key.ENTER)
         self.current_os.after_login()
@@ -155,7 +162,7 @@ class CM_operator(Operator):
         time.sleep(1)
         type('D')
         time.sleep(1)
-        self.screen.waitVanish(self.current_os.build_copied, 90)
+        self.screen.waitVanish(self.current_os.build_copied, 150)
         logging.debug('<< copy_build')
 
     def run_setup(self):
@@ -356,7 +363,8 @@ class CM_operator(Operator):
         self.screen.click(self.current_os.yes)
         self.screen.click(self.current_os.next)
         logging.debug('waiting for database re-index alert...')
-        self.screen.wait(self.current_os.ok, 300)
+        time.sleep(60)
+        self.screen.wait(self.current_os.ok, 400)
         self.screen.click(self.current_os.ok)
         self._finish()
         logging.debug('<< migrate_cm')
