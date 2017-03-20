@@ -41,6 +41,7 @@ class VM_operator(Operator):
         k = self.power_dict.get(status)
         if k:
             type(k, KEY_CTRL)
+            type(Key.ENTER)
         logging.debug('<< click_ctrl_alt_delete')
 
     def switch_tab(self, tab_id):
@@ -88,7 +89,7 @@ class VM_operator(Operator):
 
     def login(self):
         logging.debug('>> login')
-        self.screen.wait(self.current_os.login_ready, 120)
+        self.screen.wait(self.current_os.login_ready, 180)
         self.click_ctrl_alt_delete()
         if self.screen.exists(self.current_os.user_selection):
             self.screen.click(self.current_os.user_selection)
@@ -361,6 +362,7 @@ class CM_operator(Operator):
         logging.debug('>> migrate_cm')
         self.screen.click(self.current_os.next)
         self.screen.click(self.current_os.yes)
+        self.screen.wait(self.current_os.next, 30)
         self.screen.click(self.current_os.next)
         logging.debug('waiting for database re-index alert...')
         time.sleep(60)
@@ -380,7 +382,7 @@ class CM_operator(Operator):
     def migrate(self):
         logging.debug('>> migrate')
         self.run_setup()
-        self.screen.wait(self.current_os.yes, 20)
+        self.screen.wait(self.current_os.yes, 30)
         self.install_requirements()
         self.migrate_cm()
         logging.debug('<< migrate')

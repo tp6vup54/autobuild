@@ -355,7 +355,7 @@ class Os(object):
 
     def update_IIS_tls12(self):
         self.open_run()
-        type(r'C:\Users\Administrator\Desktop\IISCrypto')
+        type(r'C:\Users\Administrator\Desktop\IISCrypto' + Key.ENTER)
         self.screen.wait(self.iiscrypto.run, 60)
         self.screen.click(self.iiscrypto.run)
         self.screen.wait(self.iiscrypto.accept, 60)
@@ -363,6 +363,8 @@ class Os(object):
         self.screen.wait(self.iiscrypto.apply, 10)
         type('mpsstttttttt')
         self.screen.click(self.iiscrypto.apply)
+        time.sleep(1)
+        type(Key.ENTER + Key.ENTER)
 
 
 class Windows2008(Os):
