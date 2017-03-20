@@ -39,14 +39,16 @@ if __name__ == '__main__':
     os = create_os(config_source, vm_screen)
     procedure = config_source.get('init', 'procedure')
     config = eval(config_source.get('config', 'config'))
-    fresh_install = FreshInstall(vm_screen, os, config, {'cm': '1487588603702.png'})
+    fresh_install = FreshInstall(vm_screen, os, config, config.get('init_snapshot'))
     migration = Migration(vm_screen, os, config, config.get('init_snapshot'))
     try:
-        App.focus('VMware Workstation')
-        if procedure == 'fresh_install':
-            fresh_install.run()
-        elif procedure == 'migration':
-            migration.run()
+        # App.focus('VMware Workstation')
+        # if procedure == 'fresh_install':
+        #     fresh_install.run()
+        # elif procedure == 'migration':
+        #     migration.run()
+        os.update_tls12_ODBC_register()
+        os.update_IIS_tls12()
     except Exception as e:
         logging.error(e)
         exit()
