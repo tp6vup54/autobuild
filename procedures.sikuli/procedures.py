@@ -34,7 +34,11 @@ class FreshInstall(InstallProcedure):
         self.cm.copy_build(self.config['ftp'])
         self.cm.install_build()
         self.p4.force_sync_latest(self.config.get('p4').get('password'))
-        self.os.update_cm_config_in_staf(self.config)
+        # self.os.update_cm_config_in_staf(self.config)
+        # self.os.update_tls12_ODBC_register()
+        # self.os.update_IIS_tls12()
+        # self.vm.power_switch('restart')
+        # self.vm.login()
         self.vm.do_snapshot(self.config)
 
 

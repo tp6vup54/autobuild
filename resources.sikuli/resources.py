@@ -355,7 +355,7 @@ class Os(object):
 
     def update_IIS_tls12(self):
         self.open_run()
-        type(r'C:\Users\Administrator\Desktop\IISCrypto' + Key.ENTER)
+        type(r'\\10.201.18.44\TMCM_Lab\Private\Sean\tls\IISCrypto' + Key.ENTER)
         self.screen.wait(self.iiscrypto.run, 60)
         self.screen.click(self.iiscrypto.run)
         self.screen.wait(self.iiscrypto.accept, 60)
