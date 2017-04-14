@@ -275,6 +275,16 @@ class Os(object):
             type(Key.TAB + Key.SPACE + Key.ENTER)
         logging.debug('<< check_enter_ftp_password')
 
+    def try_to_login_ftp(self, ftp_config):
+        logging.debug('>> try_to_login_ftp')
+        self.open_run()
+        type(r'\\10.201.16.7\build\TMCM\7.0\win32\en\Rel' + Key.ENTER)
+        self.check_enter_ftp_password(ftp_config)
+        self.screen.wait(self.build_window_ready, 5)
+        self.screen.click(self.build_window)
+        type(Key.F4, KEY_ALT)
+        logging.debug('<< try_to_login_ftp')
+
     def get_newest_build(self, ftp_config):
         logging.debug('>> get_newest_build')
         self.open_run()

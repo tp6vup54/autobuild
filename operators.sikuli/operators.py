@@ -148,14 +148,17 @@ class CM_operator(Operator):
         }
         self.http_combo_order = {'https only': 2, 'http only': 1, 'http+s': 0}
 
-    def copy_build(self, ftp_config, id=None):
+    def copy_build(self, ftp_config):
         logging.debug('>> copy_build')
-        if id == None:
+        id = ftp_config.get('build_no')
+        if id == None or id == '':
             logging.debug('id = None, going to get newest build.')
             self.current_os.get_newest_build(ftp_config)
+        else:
+            self.current_os.try_to_login_ftp(ftp_config)
         self.current_os.open_run()
         type('xcopy \\\\10.201.16.7\\build\\TMCM\\7.0\\win32\\en\\Rel\\')
-        if id == None:
+        if id == None or id == '':
             type('v', KEY_CTRL)
         else:
             type(id)
