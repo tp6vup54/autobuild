@@ -377,7 +377,7 @@ class CM_operator(Operator):
     def install_build(self):
         logging.debug('>> install_build')
         self.run_setup()
-        self.screen.wait(self.current_os.yes, 20)
+        self.screen.wait(self.current_os.yes, 90)
         self.install_requirements()
         self.install_cm()
         logging.debug('<< install_build')
